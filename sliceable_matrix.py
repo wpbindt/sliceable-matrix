@@ -23,30 +23,30 @@ class SliceableMatrix:
             
         row, col = index[0], index[1]
         if isinstance(row, int) and isinstance(col, int):
-            if not (
-                self._row_slice.start + row < self._row_slice.stop
-            ):
+            if not self._row_slice.start + row < self._row_slice.stop:
                 raise IndexError('Row index out of range')
-            if not (
-                self._col_slice.start + col < self._col_slice.stop
-            ):
+            if not self._col_slice.start + col < self._col_slice.stop:
                 raise IndexError('Column index out of range')
-            return (
-                self.rows[
-                    self._row_slice.start + row
-                ][
-                    self._col_slice.start + col
-                ]
-            )
+            return self.rows[
+                self._row_slice.start + row
+            ][
+                self._col_slice.start + col
+            ]
         
         if isinstance(row, int):
             row = slice(row, row + 1, None)
         if isinstance(col, int):
             col = slice(col, col + 1, None)
-        
-#        return SliceableMatrix(
-#            self.lists,
-#            start=(self.start[0] + row.start, self.start[1] + col.start),
-#            stop=(self.start[0] + row.stop - 1, self.start[1] + col.stop - 1)
-#        )
+       
+        return SliceableMatrix(
+            self.rows,
+            col_slice=slice(
+                self._col_slice.start + col.start, 
+                self._col_slice.start + col.stop
+            ),
+            row_slice=slice(
+                self._row_slice.start + row.start, 
+                self._row_slice.start + row.stop
+            )
+        )
 
