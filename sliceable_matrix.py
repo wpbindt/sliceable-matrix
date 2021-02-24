@@ -1,33 +1,44 @@
 from __future__ import annotations
 
+from typing import Generic, Iterator, List, TypeVar
 
-class SliceableMatrix:
-    #TODO make generic
+T = TypeVar('T')
+
+
+class SliceableMatrix(Generic[T]):
+    #TODO read slices modulo length
+    #TODO deal with empties
     def __init__(
         self, 
-        rows, 
+        rows: List[List[T]],
         *, 
-        col_slice: slice = None, 
-        row_slice: slice = None
+        col_slice: slice = slice(None),
+        row_slice: slice = slice(None)
     ) -> None:
         self.rows = rows
-        if col_slice is None:
-            col_slice = slice(0, len(rows[0]))
-        if row_slice is None:
-            row_slice = slice(0, len(rows))
-        self._col_slice = col_slice
-        self._row_slice = row_slice
+        self._row_slice = self._remove_nones_from_slice(
+            row_slice, 
+            replacement_stop=len(rows)
+        )
+        self._col_slice = self._remove_nones_from_slice(
+            col_slice, 
+            replacement_stop=len(rows[0])
+        )
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from [
-            row[self._col_slice]
+            element
             for row in self.rows[self._row_slice]
+            for element in row[self._col_slice]
         ]
 
-    def __repr__(self):
-        return str(list(self))
+    def __repr__(self) -> str:
+        return str([
+            row[self._col_slice]
+            for row in self.rows[self._row_slice]
+        ])
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> Union[T, SliceableMatrix[T]]:
         if not(isinstance(index, tuple) and len(index) == 2):
             raise ValueError('Invalid slice')
 
@@ -42,7 +53,7 @@ class SliceableMatrix:
 
         return self._get_slice(row, col)
 
-    def _get_single_item(self, row: int, col: int):
+    def _get_single_item(self, row: int, col: int) -> T:
         if self._row_slice.start + row >= self._row_slice.stop:
             raise IndexError('Row index out of range')
         if self._col_slice.start + col >= self._col_slice.stop:
@@ -54,7 +65,10 @@ class SliceableMatrix:
             self._col_slice.start + col
         ]
 
-    def _get_slice(self, row: slice, col: slice) -> SliceableMatrix:
+    def _get_slice(self, row: slice, col: slice) -> SliceableMatrix[T]:
+        row = self._remove_nones_from_slice(row, self._row_slice.stop)
+        col = self._remove_nones_from_slice(col, self._col_slice.stop)
+
         return SliceableMatrix(
             self.rows,
             col_slice=slice(
@@ -66,4 +80,20 @@ class SliceableMatrix:
                 self._row_slice.start + row.stop
             )
         )
+
+    @staticmethod
+    def _remove_nones_from_slice(
+        slice_: slice, 
+        replacement_stop: int
+    ) -> slice:
+        if slice_.start is None:
+            start = 0
+        else:
+            start = slice_.start
+        if slice_.stop is None:
+            stop = replacement_stop
+        else:
+            stop = slice_.stop
+
+        return slice(start, stop)
 

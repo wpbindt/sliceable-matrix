@@ -75,7 +75,7 @@ class TestSliceableMatrix(unittest.TestCase):
         )
 
         self._check_contents(
-            matrix[:3, 1:3][1:3, :2],
+            matrix[0:3, 1:3][1:3, :2],
             expected=[
                 [5, 6],
                 [10, 11]
