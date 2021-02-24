@@ -32,11 +32,20 @@ class SliceableMatrix(Generic[T]):
             for element in row[self._col_slice]
         ]
 
-    def __bool__(self) -> bool:
-        return not (
-            self._row_slice.start == self._row_slice.stop
-            or self._col_slice.start == self._col_slice.stop
+    @property
+    def diag_size(self) -> int:
+        col_boundary = min(self._col_slice.stop, len(self.rows[0]))
+        row_boundary = min(self._row_slice.stop, len(self.rows))
+        return max(
+            0,
+            min(
+                col_boundary - self._col_slice.start,
+                row_boundary - self._row_slice.start
+            )
         )
+
+    def __bool__(self) -> bool:
+        return self.diag_size > 0
 
     def __repr__(self) -> str:
         return str([

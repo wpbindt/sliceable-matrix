@@ -114,3 +114,6 @@ class TestSliceableMatrix(unittest.TestCase):
         self.assertFalse(matrix[2, :0])
         self.assertFalse(matrix[2, 4:])
 
+        self.assertFalse(matrix[2, 4:5])
+        self.assertFalse(matrix[3:4, 2])
+
