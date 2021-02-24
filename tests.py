@@ -53,3 +53,34 @@ class TestSliceableMatrix(unittest.TestCase):
             expected=[[2], [5]]
         )
 
+        self._check_contents(
+            matrix[1, 1:4],
+            expected=[[5, 6, 9]]
+        )
+
+        self._check_contents(
+            matrix[1:3, 1:4],
+            expected=[
+                [5, 6, 9],
+                [10, 11, 13]
+            ]
+        )
+
+    def test_double_slicing(self) -> None:
+        rows = [[1, 2, 3, 4],
+                [4, 5, 6, 9],
+                [8, 10, 11, 13]]
+        matrix = SliceableMatrix(rows)
+
+        self._check_contents(
+            matrix[0:3, 1:3][1:3, 0:2],
+            expected=[
+                [5, 6],
+                [10, 11]
+            ]
+        )
+
+
+    def test_none_slice(self) -> None:
+        ...
+
