@@ -7,7 +7,7 @@ from sliceable_matrix import SliceableMatrix
 class TestSliceableMatrix(unittest.TestCase):
     def _check_contents(
         self,
-        matrix: SliceableMatrix,
+        matrix: SliceableMatrix[int],
         expected: List[List[int]],
         msg: str
     ) -> None:
