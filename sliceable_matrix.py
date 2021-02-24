@@ -1,4 +1,8 @@
+from __future__ import annotations
+
+
 class SliceableMatrix:
+    #TODO make generic
     def __init__(
         self, 
         rows, 
@@ -62,3 +66,4 @@ class SliceableMatrix:
                 self._row_slice.start + row.stop
             )
         )
+

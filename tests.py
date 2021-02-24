@@ -1,48 +1,55 @@
+from typing import List
 import unittest
 
 from sliceable_matrix import SliceableMatrix
 
 
 class TestSliceableMatrix(unittest.TestCase):
+    def _check_contents(
+        self,
+        matrix: SliceableMatrix,
+        expected: List[List[int]]
+    ) -> None:
+        row_boundary = len(expected)
+        col_boundary = len(expected[0])
+        for row in range(row_boundary):
+            for col in range(col_boundary):
+                with self.subTest('Matrix content check', row=row, col=col):
+                    self.assertEqual(
+                        matrix[row, col],
+                        expected[row][col]
+                    )
+
+        for row in range(row_boundary):
+            with self.subTest('Matrix column boundary check', row=row):
+                with self.assertRaises(IndexError):
+                    matrix[row, col_boundary]
+
+        for col in range(col_boundary):
+            with self.subTest('Matrix row boundary check', col=col):
+                with self.assertRaises(IndexError):
+                    matrix[row_boundary, col]
+
+
     def test_no_slicing(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
                 [8, 10, 11, 13]]
         matrix = SliceableMatrix(rows)
 
-        for row in range(3):
-            for col in range(4):
-                with self.subTest(row=row, col=col):
-                    self.assertEqual(
-                        matrix[row, col],
-                        rows[row][col]
-                    )
-        
-        for row in range(3):
-            with self.subTest(row=row):
-                with self.assertRaises(IndexError):
-                    matrix[row, 4]
-        for col in range(4):
-            with self.subTest(col=col):
-                with self.assertRaises(IndexError):
-                    matrix[3, col]
+        self._check_contents(
+            matrix,
+            rows
+        )
 
     def test_slicing(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
                 [8, 10, 11, 13]]
         matrix = SliceableMatrix(rows)
-        sliced_matrix = matrix[0:2, 1]
-        for row in range(2):
-            with self.subTest("Multiple rows, one column", row=row):
-                self.assertEqual(
-                    sliced_matrix[row, 0],
-                    rows[row][1]
-                )
-        with self.assertRaises(IndexError):
-            sliced_matrix[2, 0]
-        for row in range(2):
-            with self.subTest("Multiple rows, one column", row=row):
-                with self.assertRaises(IndexError):
-                    sliced_matrix[row, 1]
+
+        self._check_contents(
+            matrix[0:2, 1],
+            expected=[[2], [5]]
+        )
 
