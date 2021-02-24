@@ -1,5 +1,11 @@
 class SliceableMatrix:
-    def __init__(self, rows, *, col_slice=None, row_slice=None):
+    def __init__(
+        self, 
+        rows, 
+        *, 
+        col_slice: slice = None, 
+        row_slice: slice = None
+    ) -> None:
         self.rows = rows
         if col_slice is None:
             col_slice = slice(0, len(rows[0]))
