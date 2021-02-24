@@ -26,12 +26,18 @@ class TestSliceableMatrix(unittest.TestCase):
                     )
 
         for row in range(row_boundary):
-            with self.subTest('Matrix column boundary check', row=row):
+            with self.subTest(
+                f'Matrix column boundary check for {msg}', 
+                row=row
+            ):
                 with self.assertRaises(IndexError):
                     matrix[row, col_boundary]
 
         for col in range(col_boundary):
-            with self.subTest('Matrix row boundary check', col=col):
+            with self.subTest(
+                f'Matrix row boundary check for {msg}', 
+                col=col
+            ):
                 with self.assertRaises(IndexError):
                     matrix[row_boundary, col]
 
@@ -80,6 +86,6 @@ class TestSliceableMatrix(unittest.TestCase):
         self._check_contents(
             matrix[:, :],
             expected=rows,
-            msg='select everything with None slice'
+            msg='slices with None start and stop'
         )
 
