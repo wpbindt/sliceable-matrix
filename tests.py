@@ -89,3 +89,28 @@ class TestSliceableMatrix(unittest.TestCase):
             msg='slices with None start and stop'
         )
 
+    def test_empty(self) -> None:
+        rows = [[1, 2, 3, 4],
+                [4, 5, 6, 9],
+                [8, 10, 11, 13]]
+        matrix = SliceableMatrix(rows)
+
+        self.assertTrue(matrix)
+        self.assertTrue(matrix[1:2, 2])
+
+        self.assertFalse(matrix[1:1, 2])
+        self.assertFalse(matrix[:0, 2])
+        self.assertFalse(matrix[3:, 2])
+
+        self.assertFalse(matrix[1:1, :])
+        self.assertFalse(matrix[:0, :])
+        self.assertFalse(matrix[3:, :])
+
+        self.assertFalse(matrix[:, 1:1])
+        self.assertFalse(matrix[:, :0])
+        self.assertFalse(matrix[:, 4:])
+
+        self.assertFalse(matrix[2, 1:1])
+        self.assertFalse(matrix[2, :0])
+        self.assertFalse(matrix[2, 4:])
+

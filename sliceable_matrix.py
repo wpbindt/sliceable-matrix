@@ -7,7 +7,6 @@ T = TypeVar('T')
 
 class SliceableMatrix(Generic[T]):
     #TODO read slices modulo length
-    #TODO deal with empties
     #TODO make rows private, and add rows attribute which is sliced version of _rows
     def __init__(
         self, 
@@ -32,6 +31,12 @@ class SliceableMatrix(Generic[T]):
             for row in self.rows[self._row_slice]
             for element in row[self._col_slice]
         ]
+
+    def __bool__(self) -> bool:
+        return not (
+            self._row_slice.start == self._row_slice.stop
+            or self._col_slice.start == self._col_slice.stop
+        )
 
     def __repr__(self) -> str:
         return str([
