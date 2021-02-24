@@ -13,8 +13,9 @@ def search(matrix: SliceableMatrix[int], target: int) -> bool:
     the number of rows and columns.
     It can be proved that replacing the iteration
     over the diagonal in the beginning with something
-    that runs in logarithmic time does not improve
-    the worst case runtime. It stays O(n log(n)).
+    that runs in logarithmic time improves the total
+    worst case time to being linear in the number of
+    rows or columns.
     """
     if not matrix:
         return False
