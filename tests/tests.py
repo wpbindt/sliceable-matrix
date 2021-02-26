@@ -75,11 +75,9 @@ class TestSliceableMatrix(unittest.TestCase):
                 [8, 10, 11, 13]]
         matrix = SliceableMatrix(rows)
 
-        single_row = [[101, 20, 3, 4]]
-        single_row_matrix = SliceableMatrix(single_row)
+        single_row = SliceableMatrix([[101, 20, 3, 4]])
 
-        single_col = [[101], [20], [3]]
-        single_col_matrix = SliceableMatrix(single_col)
+        single_col = SliceableMatrix([[101], [20], [3]])
         
         cases = [
             Case(
@@ -119,12 +117,12 @@ class TestSliceableMatrix(unittest.TestCase):
                 msg='slices with None start and stop'
             ),
             Case(
-                matrix=single_row_matrix[:, :2],
+                matrix=single_row[:, :2],
                 expected=[[101,20]],
                 msg='single row matrix'
             ),
             Case(
-                matrix=single_col_matrix[:2, :],
+                matrix=single_col[:2, :],
                 expected=[[101], [20]],
                 msg='single column matrix'
             )
