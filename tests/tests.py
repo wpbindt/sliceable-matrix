@@ -7,25 +7,24 @@ from sliceable_matrix.sliceable_matrix import SliceableMatrix
 
 @dataclass
 class Case:
-    actual: SliceableMatrix[int]
+    matrix: SliceableMatrix[int]
     expected: List[List[int]]
     msg: str
 
 
 class TestSliceableMatrix(unittest.TestCase):
-    def _check_contents(
-        self,
-        matrix: SliceableMatrix[int],
-        expected: List[List[int]],
-        msg: str
-    ) -> None:
+    def _check_contents(self, case: Case) -> None:
+        matrix = case.matrix
+        expected = case.expected
+        msg = case.msg
+
         row_boundary = len(expected)
         col_boundary = len(expected[0])
         for row in range(row_boundary):
             for col in range(col_boundary):
                 with self.subTest(
                     f'Matrix content check for {msg}', 
-                    row=row, 
+                    row=row,
                     col=col
                 ):
                     self.assertEqual(
@@ -69,22 +68,22 @@ class TestSliceableMatrix(unittest.TestCase):
         
         cases = [
             Case(
-                actual=matrix,
+                matrix=matrix,
                 expected=rows,
                 msg='unsliced matrix'
             ),
             Case(
-                actual=matrix[0:2, 1],
+                matrix=matrix[0:2, 1],
                 expected=[[2], [5]],
                 msg='sliced rows, selected column'
             ),
             Case(
-                actual=matrix[1, 1:],
+                matrix=matrix[1, 1:],
                 expected=[[5, 6, 9]],
                 msg='sliced columns, selected row'
             ),
             Case(
-                actual=matrix[1:3, 1:4],
+                matrix=matrix[1:3, 1:4],
                 expected=[
                     [5, 6, 9],
                     [10, 11, 13]
@@ -92,7 +91,7 @@ class TestSliceableMatrix(unittest.TestCase):
                 msg='sliced rows and columns'
             ),
             Case(
-                actual=matrix[0:3, 1:3][1:3, :2],
+                matrix=matrix[0:3, 1:3][1:3, :2],
                 expected=[
                     [5, 6],
                     [10, 11]
@@ -100,30 +99,24 @@ class TestSliceableMatrix(unittest.TestCase):
                 msg='doubly sliced matrix'
             ),
             Case(
-                actual=matrix[:, :],
+                matrix=matrix[:, :],
                 expected=rows,
                 msg='slices with None start and stop'
             ),
             Case(
-                actual=single_row_matrix[:, :2],
+                matrix=single_row_matrix[:, :2],
                 expected=[[101,20]],
                 msg='single row matrix'
             ),
             Case(
-                actual=single_col_matrix[:2, :],
+                matrix=single_col_matrix[:2, :],
                 expected=[[101], [20]],
                 msg='single column matrix'
             )
         ]
 
         for case in cases:
-            self._check_contents(
-                msg=case.msg,
-                matrix=case.actual,
-                expected=case.expected
-            )
-
-
+            self._check_contents(case)
 
     def test_exceptions(self) -> None:
         rows = [[1, 2, 3, 4],
