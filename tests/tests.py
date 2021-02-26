@@ -37,16 +37,25 @@ class TestSliceableMatrix(unittest.TestCase):
                 f'Matrix column boundary check for {msg}', 
                 row=row
             ):
-                with self.assertRaises(IndexError):
+                with self.assertRaises(IndexError) as e:
                     matrix[row, col_boundary]
+                self.assertEqual(
+                    str(e.exception),
+                    'Column index out of range'
+                )
 
         for col in range(col_boundary):
             with self.subTest(
                 f'Matrix row boundary check for {msg}', 
                 col=col
             ):
-                with self.assertRaises(IndexError):
+                with self.assertRaises(IndexError) as e:
                     matrix[row_boundary, col]
+                self.assertEqual(
+                    str(e.exception),
+                    'Row index out of range'
+                )
+
 
         with self.subTest(f'Diagonal size check for {msg}'):
             self.assertEqual(
