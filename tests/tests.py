@@ -143,36 +143,25 @@ class TestSliceableMatrix(unittest.TestCase):
             'Invalid slice or index'
         )
 
-    def test_exceptions(self) -> None:
+    def test_invalid_slices(self) -> None:
         matrix = SliceableMatrix(
             [[1, 2, 3, 4],
              [4, 5, 6, 9],
              [8, 10, 11, 13]]
         )
-        self._check_invalid_slice_exception(
-            matrix,
-            1
-        )
-
-        self._check_invalid_slice_exception(
-            matrix,
-            (1,)
-        )
-
-        self._check_invalid_slice_exception(
-            matrix,
-            (slice(1, 2),)
-        )
-
-        self._check_invalid_slice_exception(
-            matrix,
-            (1, 2, 3)
-        )
-
-        self._check_invalid_slice_exception(
-            matrix,
-            (slice(1,2), 2, 3)
-        )
+        slices = [
+            1,
+            (1,),
+            (slice(1, 2),),
+            (1, 2, 3),
+            (slice(1, 2), 2, 3),
+        ]
+        for slice_ in slices:
+            with self.subTest(slice=slice_):
+                self._check_invalid_slice_exception(
+                    matrix,
+                    slice_
+                )
 
     def test_empty(self) -> None:
         rows = [[1, 2, 3, 4],
@@ -180,25 +169,27 @@ class TestSliceableMatrix(unittest.TestCase):
                 [8, 10, 11, 13]]
         matrix = SliceableMatrix(rows)
 
-        self.assertTrue(matrix)
-        self.assertTrue(matrix[1:2, 2])
+        for case in [matrix, matrix[1:2, 2]]:
+            with self.subTest('non-empty', matrix=case):
+                self.assertTrue(case)
 
-        self.assertFalse(matrix[1:1, 2])
-        self.assertFalse(matrix[:0, 2])
-        self.assertFalse(matrix[3:, 2])
-
-        self.assertFalse(matrix[1:1, :])
-        self.assertFalse(matrix[:0, :])
-        self.assertFalse(matrix[3:, :])
-
-        self.assertFalse(matrix[:, 1:1])
-        self.assertFalse(matrix[:, :0])
-        self.assertFalse(matrix[:, 4:])
-
-        self.assertFalse(matrix[2, 1:1])
-        self.assertFalse(matrix[2, :0])
-        self.assertFalse(matrix[2, 4:])
-
-        self.assertFalse(matrix[2, 4:5])
-        self.assertFalse(matrix[3:4, 2])
+        empty_cases = [
+            matrix[1:1, 2],
+            matrix[:0, 2],
+            matrix[3:, 2],
+            matrix[1:1, :],
+            matrix[:0, :],
+            matrix[3:, :],
+            matrix[:, 1:1],
+            matrix[:, :0],
+            matrix[:, 4:],
+            matrix[2, 1:1],
+            matrix[2, :0],
+            matrix[2, 4:],
+            matrix[2, 4:5],
+            matrix[3:4, 2],
+        ]
+        for case in empty_cases:
+            with self.subTest('empty', matrix=case):
+                self.assertFalse(case)
 
