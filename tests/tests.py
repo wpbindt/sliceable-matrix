@@ -1,7 +1,7 @@
 from typing import List
 import unittest
 
-from sliceable_matrix import SliceableMatrix
+from sliceable_matrix.sliceable_matrix import SliceableMatrix
 
 
 class TestSliceableMatrix(unittest.TestCase):
