@@ -54,8 +54,8 @@ class SliceableMatrix(Generic[T]):
         ])
 
     def __getitem__(self, index) -> Union[T, SliceableMatrix[T]]:
-        if not(isinstance(index, tuple) and len(index) == 2):
-            raise ValueError('Invalid slice')
+        if len(index) != 2:
+            raise TypeError('Invalid slice or index')
 
         row, col = index[0], index[1]
         if isinstance(row, int) and isinstance(col, int):

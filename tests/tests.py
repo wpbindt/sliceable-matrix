@@ -111,6 +111,23 @@ class TestSliceableMatrix(unittest.TestCase):
             msg='single column matrix'
         )
 
+    def test_exceptions(self) -> None:
+        rows = [[1, 2, 3, 4],
+                [4, 5, 6, 9],
+                [8, 10, 11, 13]]
+        matrix = SliceableMatrix(rows)
+        with self.assertRaises(TypeError):
+            matrix[1]
+
+        with self.assertRaises(TypeError):
+            matrix[1:2]
+
+        with self.assertRaises(TypeError):
+            matrix[1, 2, 3]
+
+        with self.assertRaises(TypeError):
+            matrix[1:2, 2, 3]
+
     def test_empty(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
