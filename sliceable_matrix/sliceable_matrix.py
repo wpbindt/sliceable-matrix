@@ -7,7 +7,6 @@ T = TypeVar('T')
 
 class SliceableMatrix(Generic[T]):
     #TODO read slices modulo length
-    #TODO make rows private, and add rows attribute which is sliced version of _rows
     def __init__(
         self, 
         rows: List[List[T]],
@@ -15,7 +14,7 @@ class SliceableMatrix(Generic[T]):
         col_slice: slice = slice(None),
         row_slice: slice = slice(None)
     ) -> None:
-        self.rows = rows
+        self._rows = rows
         self._row_slice = self._remove_nones_from_slice(
             row_slice, 
             replacement_stop=len(rows)
@@ -25,17 +24,24 @@ class SliceableMatrix(Generic[T]):
             replacement_stop=len(rows[0])
         )
 
+    @property
+    def rows(self) -> List[List[T]]:
+        return [
+            row[self._col_slice]
+            for row in self._rows[self._row_slice]
+        ]
+
     def __iter__(self) -> Iterator[T]:
         yield from [
             element
-            for row in self.rows[self._row_slice]
-            for element in row[self._col_slice]
+            for row in self.rows
+            for element in row
         ]
 
     @property
     def diag_size(self) -> int:
-        col_boundary = min(self._col_slice.stop, len(self.rows[0]))
-        row_boundary = min(self._row_slice.stop, len(self.rows))
+        col_boundary = min(self._col_slice.stop, len(self._rows[0]))
+        row_boundary = min(self._row_slice.stop, len(self._rows))
         return max(
             0,
             min(
@@ -47,11 +53,8 @@ class SliceableMatrix(Generic[T]):
     def __bool__(self) -> bool:
         return self.diag_size > 0
 
-    def __repr__(self) -> str:
-        return str([
-            row[self._col_slice]
-            for row in self.rows[self._row_slice]
-        ])
+    def __str__(self) -> str:
+        return str(self.rows)
 
     def __getitem__(self, index) -> Union[T, SliceableMatrix[T]]:
         if len(index) != 2:
@@ -74,7 +77,7 @@ class SliceableMatrix(Generic[T]):
         if self._col_slice.start + col >= self._col_slice.stop:
             raise IndexError('Column index out of range')
 
-        return self.rows[
+        return self._rows[
             self._row_slice.start + row
         ][
             self._col_slice.start + col
@@ -85,7 +88,7 @@ class SliceableMatrix(Generic[T]):
         col = self._remove_nones_from_slice(col, self._col_slice.stop)
 
         return SliceableMatrix(
-            self.rows,
+            self._rows,
             col_slice=slice(
                 self._col_slice.start + col.start, 
                 self._col_slice.start + col.stop
