@@ -89,6 +89,14 @@ class TestSliceableMatrix(unittest.TestCase):
             msg='slices with None start and stop'
         )
 
+        single_row = [[101, 20, 3, 4]]
+        single_row_matrix = SliceableMatrix(single_row)
+        self._check_contents(
+            single_row_matrix[:, :2],
+            expected=[[101,20]],
+            msg='single row matrix'
+        )
+
     def test_empty(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
