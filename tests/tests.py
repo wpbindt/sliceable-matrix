@@ -41,6 +41,12 @@ class TestSliceableMatrix(unittest.TestCase):
                 with self.assertRaises(IndexError):
                     matrix[row_boundary, col]
 
+        with self.subTest(f'Diagonal size check for {msg}'):
+            self.assertEqual(
+                matrix.diag_size,
+                min(row_boundary, col_boundary)
+            )
+
     def test_slicing(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
@@ -95,6 +101,14 @@ class TestSliceableMatrix(unittest.TestCase):
             single_row_matrix[:, :2],
             expected=[[101,20]],
             msg='single row matrix'
+        )
+
+        single_col = [[101], [20], [3]]
+        single_col_matrix = SliceableMatrix(single_col)
+        self._check_contents(
+            single_col_matrix[:2, :],
+            expected=[[101], [20]],
+            msg='single column matrix'
         )
 
     def test_empty(self) -> None:
