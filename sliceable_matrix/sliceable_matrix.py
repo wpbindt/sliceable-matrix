@@ -57,7 +57,7 @@ class SliceableMatrix(Generic[T]):
         return str(self.rows)
 
     def __getitem__(self, index) -> Union[T, SliceableMatrix[T]]:
-        if len(index) != 2:
+        if isinstance(index, int) or len(index) != 2:
             raise TypeError('Invalid slice or index')
 
         row, col = index[0], index[1]

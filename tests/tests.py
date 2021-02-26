@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple, Union
 import unittest
 
 from sliceable_matrix.sliceable_matrix import SliceableMatrix
@@ -131,22 +131,48 @@ class TestSliceableMatrix(unittest.TestCase):
         for case in cases:
             self._check_contents(case)
 
+    def _check_invalid_slice_exception(
+        self,
+        matrix: SliceableMatrix,
+        slices: Union[Tuple[Union[slice, int]], int]
+    ) -> None:
+        with self.assertRaises(TypeError) as e:
+            matrix.__getitem__(slices)
+        self.assertEqual(
+            str(e.exception),
+            'Invalid slice or index'
+        )
+
     def test_exceptions(self) -> None:
-        rows = [[1, 2, 3, 4],
-                [4, 5, 6, 9],
-                [8, 10, 11, 13]]
-        matrix = SliceableMatrix(rows)
-        with self.assertRaises(TypeError):
-            matrix[1]
+        matrix = SliceableMatrix(
+            [[1, 2, 3, 4],
+             [4, 5, 6, 9],
+             [8, 10, 11, 13]]
+        )
+        self._check_invalid_slice_exception(
+            matrix,
+            1
+        )
 
-        with self.assertRaises(TypeError):
-            matrix[1:2]
+        self._check_invalid_slice_exception(
+            matrix,
+            (1,)
+        )
 
-        with self.assertRaises(TypeError):
-            matrix[1, 2, 3]
+        self._check_invalid_slice_exception(
+            matrix,
+            (slice(1, 2),)
+        )
 
-        with self.assertRaises(TypeError):
-            matrix[1:2, 2, 3]
+        self._check_invalid_slice_exception(
+            matrix,
+            (1, 2, 3)
+        )
+
+        self._check_invalid_slice_exception(
+            matrix,
+            (slice(1,2), 2, 3)
+        )
 
     def test_empty(self) -> None:
         rows = [[1, 2, 3, 4],
