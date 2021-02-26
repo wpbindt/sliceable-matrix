@@ -54,6 +54,12 @@ class TestSliceableMatrix(unittest.TestCase):
                 min(row_boundary, col_boundary)
             )
 
+        with self.subTest(f'Rows property check for {msg}'):
+            self.assertEqual(
+                matrix.rows,
+                expected
+            )
+
     def test_slicing(self) -> None:
         rows = [[1, 2, 3, 4],
                 [4, 5, 6, 9],
