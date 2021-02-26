@@ -56,7 +56,6 @@ class TestSliceableMatrix(unittest.TestCase):
                     'Row index out of range'
                 )
 
-
         with self.subTest(f'Diagonal size check for {msg}'):
             self.assertEqual(
                 matrix.diag_size,
@@ -164,10 +163,11 @@ class TestSliceableMatrix(unittest.TestCase):
                 )
 
     def test_empty(self) -> None:
-        rows = [[1, 2, 3, 4],
-                [4, 5, 6, 9],
-                [8, 10, 11, 13]]
-        matrix = SliceableMatrix(rows)
+        matrix = SliceableMatrix(
+            [[1, 2, 3, 4],
+             [4, 5, 6, 9],
+             [8, 10, 11, 13]]
+        )
 
         for case in [matrix, matrix[1:2, 2]]:
             with self.subTest('non-empty', matrix=case):
