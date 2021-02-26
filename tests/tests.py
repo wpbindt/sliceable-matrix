@@ -1,7 +1,15 @@
+from dataclasses import dataclass
 from typing import List
 import unittest
 
 from sliceable_matrix.sliceable_matrix import SliceableMatrix
+
+
+@dataclass
+class Case:
+    actual: SliceableMatrix[int]
+    expected: List[List[int]]
+    msg: str
 
 
 class TestSliceableMatrix(unittest.TestCase):
@@ -53,63 +61,69 @@ class TestSliceableMatrix(unittest.TestCase):
                 [8, 10, 11, 13]]
         matrix = SliceableMatrix(rows)
 
-        self._check_contents(
-            matrix,
-            expected=rows,
-            msg='unsliced matrix'
-        )
-
-        self._check_contents(
-            matrix[0:2, 1],
-            expected=[[2], [5]],
-            msg='sliced rows, selected column'
-        )
-
-        self._check_contents(
-            matrix[1, 1:],
-            expected=[[5, 6, 9]],
-            msg='sliced columns, selected row'
-        )
-
-        self._check_contents(
-            matrix[1:3, 1:4],
-            expected=[
-                [5, 6, 9],
-                [10, 11, 13]
-            ],
-            msg='sliced rows and columns'
-        )
-
-        self._check_contents(
-            matrix[0:3, 1:3][1:3, :2],
-            expected=[
-                [5, 6],
-                [10, 11]
-            ],
-            msg='doubly sliced matrix'
-        )
-
-        self._check_contents(
-            matrix[:, :],
-            expected=rows,
-            msg='slices with None start and stop'
-        )
-
         single_row = [[101, 20, 3, 4]]
         single_row_matrix = SliceableMatrix(single_row)
-        self._check_contents(
-            single_row_matrix[:, :2],
-            expected=[[101,20]],
-            msg='single row matrix'
-        )
 
         single_col = [[101], [20], [3]]
         single_col_matrix = SliceableMatrix(single_col)
-        self._check_contents(
-            single_col_matrix[:2, :],
-            expected=[[101], [20]],
-            msg='single column matrix'
-        )
+        
+        cases = [
+            Case(
+                actual=matrix,
+                expected=rows,
+                msg='unsliced matrix'
+            ),
+            Case(
+                actual=matrix[0:2, 1],
+                expected=[[2], [5]],
+                msg='sliced rows, selected column'
+            ),
+            Case(
+                actual=matrix[1, 1:],
+                expected=[[5, 6, 9]],
+                msg='sliced columns, selected row'
+            ),
+            Case(
+                actual=matrix[1:3, 1:4],
+                expected=[
+                    [5, 6, 9],
+                    [10, 11, 13]
+                ],
+                msg='sliced rows and columns'
+            ),
+            Case(
+                actual=matrix[0:3, 1:3][1:3, :2],
+                expected=[
+                    [5, 6],
+                    [10, 11]
+                ],
+                msg='doubly sliced matrix'
+            ),
+            Case(
+                actual=matrix[:, :],
+                expected=rows,
+                msg='slices with None start and stop'
+            ),
+            Case(
+                actual=single_row_matrix[:, :2],
+                expected=[[101,20]],
+                msg='single row matrix'
+            ),
+            Case(
+                actual=single_col_matrix[:2, :],
+                expected=[[101], [20]],
+                msg='single column matrix'
+            )
+        ]
+
+        for case in cases:
+            self._check_contents(
+                msg=case.msg,
+                matrix=case.actual,
+                expected=case.expected
+            )
+
+
 
     def test_exceptions(self) -> None:
         rows = [[1, 2, 3, 4],
