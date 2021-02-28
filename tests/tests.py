@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Union
+from typing import Any, cast, List, Tuple, Union
 import unittest
 
 from sliceable_matrix.sliceable_matrix import SliceableMatrix
@@ -80,22 +80,22 @@ class TestSliceableMatrix(unittest.TestCase):
         
         cases = [
             Case(
-                matrix=matrix,
+                matrix=cast(SliceableMatrix, matrix),
                 expected=rows,
                 msg='unsliced matrix'
             ),
             Case(
-                matrix=matrix[0:2, 1],
+                matrix=cast(SliceableMatrix, matrix[0:2, 1]),
                 expected=[[2], [5]],
                 msg='sliced rows, selected column'
             ),
             Case(
-                matrix=matrix[1, 1:],
+                matrix=cast(SliceableMatrix, matrix[1, 1:]),
                 expected=[[5, 6, 9]],
                 msg='sliced columns, selected row'
             ),
             Case(
-                matrix=matrix[1:3, 1:4],
+                matrix=cast(SliceableMatrix, matrix[1:3, 1:4]),
                 expected=[
                     [5, 6, 9],
                     [10, 11, 13]
@@ -103,7 +103,7 @@ class TestSliceableMatrix(unittest.TestCase):
                 msg='sliced rows and columns'
             ),
             Case(
-                matrix=matrix[0:3, 1:3][1:3, :2],
+                matrix=matrix[0:3, 1:3][1:3, :2],  # type: ignore
                 expected=[
                     [5, 6],
                     [10, 11]
@@ -111,17 +111,17 @@ class TestSliceableMatrix(unittest.TestCase):
                 msg='doubly sliced matrix'
             ),
             Case(
-                matrix=matrix[:, :],
+                matrix=cast(SliceableMatrix, matrix[:, :]),
                 expected=rows,
                 msg='slices with None start and stop'
             ),
             Case(
-                matrix=single_row[:, :2],
+                matrix=cast(SliceableMatrix, single_row[:, :2]),
                 expected=[[101,20]],
                 msg='single row matrix'
             ),
             Case(
-                matrix=single_col[:2, :],
+                matrix=cast(SliceableMatrix, single_col[:2, :]),
                 expected=[[101], [20]],
                 msg='single column matrix'
             )
@@ -133,7 +133,7 @@ class TestSliceableMatrix(unittest.TestCase):
     def _check_invalid_slice_exception(
         self,
         matrix: SliceableMatrix,
-        slices: Union[Tuple[Union[slice, int]], int]
+        slices: Any
     ) -> None:
         with self.assertRaises(TypeError) as e:
             matrix.__getitem__(slices)
