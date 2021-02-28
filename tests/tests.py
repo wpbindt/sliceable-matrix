@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, cast, List, Tuple, Union
 import unittest
 
-from sliceable_matrix.sliceable_matrix import SliceableMatrix
+from sliceable_matrix import SliceableMatrix
 
 
 @dataclass

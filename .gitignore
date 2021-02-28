@@ -1,3 +1,4 @@
 *.pyc
+.mutmut_cache
 __pycache__/
 
